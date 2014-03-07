@@ -4,7 +4,11 @@
 extern "C" {
 	#include "extApi.h"
 }
-
+/* TODO:
+ * This is not the prettiest code I have written, its just 1 big clunky function
+ * But then again its just for exploring V-rep
+ * Also, is there a way of launching the sim without the GUI?
+ */
 int main(int argc, char *argv[]) {
 	int port = 19997;
 	int clientId = simxStart((simxChar*)"127.0.0.1", port, true, true, 2000, 5);
@@ -14,7 +18,7 @@ int main(int argc, char *argv[]) {
 	}
 	// lets start simulation
 	simxStartSimulation(clientId, simx_opmode_oneshot);
-	int first = -1;	
+	int first = -1;	// this is for selection of opmode for getting matrix
 	int numOfIters = 1000;
 	while((simxGetConnectionId(clientId) != -1) && (numOfIters-- >= 1)) {
 		// getting a couple of Joint Handles
@@ -36,6 +40,7 @@ int main(int argc, char *argv[]) {
 		}
 		extApi_sleepMs(10);
 
+		/* Note that the initial few values would be erroneous... simx_error_novalue_flag(1) */
 		if (result == simx_error_remote_error_flag)
 			printf("Check handle\n");
 		printf("The position is: %f\n", (float)(position[0]));
